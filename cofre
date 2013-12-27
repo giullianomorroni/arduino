@@ -1,0 +1,67 @@
+#include <Keypad.h>
+#include <Servo.h> 
+
+Servo myservo;
+int pos = 0;    // variable to store the servo position 
+
+const byte ROWS = 4;
+const byte COLS = 3;
+
+char keys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+};
+
+byte rowPins[ROWS] = { 2, 3, 4, 5 };
+byte colPins[COLS] = { 6, 7, 10 }; 
+
+Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+
+char input [4];
+int position = 0;
+char password [4] = {'1', '1', '2', '3'};
+
+void setup() {
+  Serial.begin(9600);
+  myservo.attach(9);
+  myservo.write(90);
+}
+
+void loop() {
+  delay(100);
+  char key = kpd.getKey();
+
+  if (position == 4){
+    position = 0;
+  }
+
+  if (key){
+    if (key == '#'){
+      clean();
+    } else {
+      input[position] = key;
+      position = position+1;
+      Serial.println(input);
+    }
+  }
+  
+  if (input[0] == password[0] && input[1] == password[1] && input[2] == password[2] && input[3] == password[3] ){
+    myservo.write(180);
+    delay(15);
+    Serial.println("open");
+  } else {
+    myservo.write(90);
+    delay(15);
+  }
+  
+}
+
+void clean() {
+    position = 0;
+    input[4] = {};
+    Serial.println("clean");
+    Serial.println(input);
+    delay(100);
+}
