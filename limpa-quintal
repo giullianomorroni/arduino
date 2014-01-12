@@ -21,16 +21,22 @@ void setup() {
   Serial.begin(9600);
   pinMode(WR, OUTPUT);
   pinMode(WL, OUTPUT);
-  delay(2000);
   DWR = 0;
   DWL = 0;
 
 }
 
+  
 void loop() {
 
-  digitalWrite(WR, DWR < 20 && DWR =! 0);
-  digitalWrite(WL, DWL < 20 && DWL =! 0);
+  int SR = HIGH;
+  int SL = HIGH;
+  
+  if (DWR < 50 && DWR != 0){SR = LOW;}
+  if (DWL < 50 && DWL != 0){SL = LOW;}
+  
+  digitalWrite(WR, SR);
+  digitalWrite(WL, SL);
 
   delay(40);               // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
   DWL = sonar_left.ping(); // Send ping, get ping time in microseconds (uS).
