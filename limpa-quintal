@@ -23,7 +23,6 @@ void setup() {
   pinMode(WL, OUTPUT);
   DWR = 0;
   DWL = 0;
-
 }
 
   
@@ -31,10 +30,15 @@ void loop() {
 
   int SR = HIGH;
   int SL = HIGH;
-  
+
   if (DWR < 50 && DWR != 0){SR = LOW;}
   if (DWL < 50 && DWL != 0){SL = LOW;}
-  
+
+  if (SR == LOW && SL == LOW){
+    if (DWR > DWL){SR = LOW; SL = HIGH;}
+    else {SL = LOW; SR = HIGH;}
+  }
+
   digitalWrite(WR, SR);
   digitalWrite(WL, SL);
 
@@ -43,12 +47,6 @@ void loop() {
   delay(40);
   DWR = sonar_right.ping(); // Send ping, get ping time in microseconds (uS).
 
-  //Serial.print("Ping L: ");
   DWL = DWL / US_ROUNDTRIP_CM;
-  //Serial.println(DWL); // Convert ping time to distance in cm and print result (0 = outside set distance range)
-
-  //Serial.print("Ping R: ");
   DWR = DWR / US_ROUNDTRIP_CM;
-  //Serial.println(DWR); // Convert ping time to distance in cm and print result (0 = outside set distance range)
-
 }
