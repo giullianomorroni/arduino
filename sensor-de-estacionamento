@@ -47,12 +47,12 @@ void loop() {
     digitalWrite(blue, 0);
     digitalWrite(red, 255);
     shutdown = 1;
-    delay(20000); //espera 20 segundos ate terminar de estacionar
+    delay(15000); //espera 20 segundos ate terminar de estacionar
   } else {
     digitalWrite(green, 0);
     digitalWrite(blue, 0);    
     digitalWrite(red, 0);
-    delay(1800000); //meia hora desligado
+    delay(2000);
   }
 
 }
