@@ -10,7 +10,7 @@ void setup() {
   //Serial.begin(9600);
   pinMode(blue, OUTPUT);
   pinMode(red, OUTPUT);
-  pinMode(green, OUTPUT);  
+  pinMode(green, OUTPUT);
 }
 
 void loop() {
@@ -31,28 +31,37 @@ void loop() {
   // convert the time into a distanceM
   cm = microsecondsToCentimeters(duration);
   delay(50);
+  //Serial.println(cm);
  
-  if(cm > 100 && cm != 0){
+  if(cm > 200 && cm != 0) {
+    digitalWrite(green, 0);
+    digitalWrite(blue, 0);    
+    digitalWrite(red, 0);
+    //delay(2000);
+    delay(500);
+  } else if(cm > 100 && cm != 0){
     digitalWrite(green, 255);
     digitalWrite(blue, 0);
     digitalWrite(red, 0);
-    shutdown = 0;
+    //shutdown = 0;
+    delay(500);
   } else if(cm > 50 && cm < 100 && cm != 0) {
     digitalWrite(green, 255);
     digitalWrite(blue, 0);    
     digitalWrite(red, 255);
-    shutdown = 0;
-  } else if(cm < 50 && cm != 0 && shutdown == 0){
+    //shutdown = 0;
+    delay(500);
+  } else if(cm < 50 && cm != 0){ // && shutdown == 0
     digitalWrite(green, 0);
     digitalWrite(blue, 0);
     digitalWrite(red, 255);
-    shutdown = 1;
-    delay(15000); //espera 20 segundos ate terminar de estacionar
+    //shutdown = 1;
+    delay(500);
   } else {
     digitalWrite(green, 0);
     digitalWrite(blue, 0);    
     digitalWrite(red, 0);
-    delay(2000);
+    //delay(2000);
   }
 
 }
