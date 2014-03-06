@@ -1,0 +1,30 @@
+int ledPin = 10;
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop(){
+  int value = 0;
+  while (Serial.available())  {
+    value = value + Serial.read();
+  
+  }
+  if (value != 0) {
+    //Serial.write(value);  
+    light(value);
+  }
+  delay(500);
+}
+
+void light(int n){
+  Serial.println(n);
+  if (n == 97) { 
+    digitalWrite(ledPin, HIGH);
+  } 
+  else if (n == 98) { 
+    digitalWrite(ledPin, LOW);
+  }
+  
+}
