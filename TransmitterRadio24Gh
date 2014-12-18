@@ -1,0 +1,31 @@
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <RF24_config.h>
+
+int charToSend[1];
+RF24 radio(9,10);
+const uint64_t pipe = 0xE8E8F0F0E1LL;
+
+void setup(void){
+  Serial.begin(115200);
+  Serial.println("setup transmitter");
+  radio.begin();
+  radio.setRetries(15, 5);
+  radio.enableAckPayload();
+  radio.openWritingPipe(pipe);
+}
+
+void loop(void){
+  String message;
+  if (Serial.available() > 0) {
+    char incomingByte = Serial.read();
+    charToSend[0] = incomingByte;
+    message = String(incomingByte);
+  }
+
+  if (message.length() > 0 && charToSend[0] != 13) {
+    Serial.println(message);
+    radio.write(charToSend, 1);
+  }
+}
