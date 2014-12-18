@@ -1,0 +1,116 @@
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <RF24_config.h>
+#include <SPI.h>
+
+int msg[1];
+RF24 radio(9,10);
+const uint64_t pipe = 0xE8E8F0F0E1LL;
+String theMessage = "";
+
+String uuid;
+String account;
+String state;
+
+boolean _uuid = false;
+boolean _account = false;
+boolean _state = false;
+
+        
+void setup(void){
+  Serial.begin(57600);
+  Serial.println("setup receiver");
+  radio.begin();
+  radio.openReadingPipe(1,pipe);
+  radio.startListening();
+  pinMode(7, OUTPUT);
+  pinMode(6, OUTPUT);
+}
+
+void loop(void){
+  if (radio.available()) {
+      boolean done = radio.read(msg, 1);
+      char theChar = msg[0];
+      Serial.println("Received: ");
+      Serial.println(theChar);
+      if(theChar == '#') {
+        theMessage = "";
+        _uuid = false;
+        _account = false;
+        _state = false;
+        return;
+      }
+      theMessage.concat(theChar);
+
+      if (theMessage.length() > 10) {
+        theMessage = "";
+        _uuid = false;
+        _account = false;
+        _state = false;
+        return;
+      }
+     
+      if (theMessage == "start"){
+        Serial.println("starting to receice");
+        theMessage = "";
+        _uuid = true;
+        digitalWrite(2, HIGH);
+      }
+
+      if(_uuid) {
+        if (theMessage.length() == 8) {
+           uuid = theMessage;
+           theMessage = "";
+          _uuid = false;
+          _account = true;
+          Serial.println("UUID Received: ");
+          Serial.println(uuid);
+        }
+      }
+
+      if(_account) {
+        if (theMessage.length() == 8) {
+          account = theMessage;
+          theMessage = "";
+          _uuid = false;
+          _account = false;
+          _state = true;
+          Serial.println("Account Received: ");
+          Serial.println(account);
+        }
+      }
+
+      if(_state) { 
+        if (theMessage.length() == 2) {
+          state = theMessage;
+          theMessage = "";
+          _uuid = false;
+          _account = false;
+          _state = false;
+          Serial.println("State Received: ");
+          Serial.println(state);
+          Serial.println("finishing commands");
+        }
+      }
+      
+      executeCommand();
+      
+   }
+}
+
+void executeCommand(){
+  if(uuid != "" && account != "" && state != "") {
+    Serial.println("Executing Command");
+    if(uuid == "00110011") {
+      if(state == "00") { digitalWrite(7, LOW); }
+      if(state == "01") { digitalWrite(7, HIGH); }
+    }
+    if(uuid == "11001100") {
+      if(state == "00") { digitalWrite(6, LOW); }
+      if(state == "01") { digitalWrite(6, HIGH); }
+    }
+    uuid = "";
+    account = "";
+    state = "";
+  }
+}
