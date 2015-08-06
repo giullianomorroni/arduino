@@ -1,0 +1,48 @@
+#include <NewPing.h>
+
+#define TRIGGER_PIN  11  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+
+#define ECHO_PIN_ENTRANCE 9  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define ECHO_PIN_EXIT     7  // Arduino pin tied to echo pin on the ultrasonic sensor.
+
+#define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+
+NewPing sonarEntrance(TRIGGER_PIN, ECHO_PIN_ENTRANCE, MAX_DISTANCE);
+NewPing sonarExit(TRIGGER_PIN, ECHO_PIN_EXIT, MAX_DISTANCE);
+int totalPessoas = 0;
+boolean show = false;
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("setup");
+}
+
+void loop() {
+  delay(50);
+  unsigned int en = (sonarEntrance.ping() / US_ROUNDTRIP_CM);
+  delay(50);
+  unsigned int ex = sonarExit.ping();
+
+  if(en != 0) {
+    totalPessoas = totalPessoas+1;
+    show = true;
+  }
+
+  if(ex != 0) {
+    totalPessoas = totalPessoas-1;
+    show = true;
+  }
+
+  if(show) {
+    Serial.print("Total de Pessoas ");
+    Serial.println(totalPessoas);
+
+    //Serial.print("Distancias: ");
+    //Serial.print(ex);
+    //Serial.print(" ");
+    //Serial.println(en);
+
+    show = false;
+    delay(1000);
+  }
+}
